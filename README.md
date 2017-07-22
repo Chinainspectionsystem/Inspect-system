@@ -62,7 +62,7 @@ SVN版本控制工具
 
 ## 模块结构图
 
-![](https://ws3.sinaimg.cn/large/006tNc79ly1fhsuqew1maj31kw172wja.jpg)
+![](http://om8u46rmb.bkt.clouddn.com/web%20%E8%AF%A2%E6%9F%A5%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9D%97%E7%BB%93%E6%9E%84%E5%9B%BE.png)
 
 ## 程序流程图
-![](https://ws3.sinaimg.cn/large/006tNc79ly1fhsus64nclj31kw0qbaav.jpg)
+![](http://om8u46rmb.bkt.clouddn.com/%E8%AF%A2%E6%9F%A5%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
