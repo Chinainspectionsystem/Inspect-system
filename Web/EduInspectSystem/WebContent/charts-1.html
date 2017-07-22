@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="css/demo.css" />
+	<link rel="stylesheet" type="text/css" href="css/easydropdown.css" />
+    <script src="js/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/3.6.2/echarts.min.js"></script>
+	<script src="js/jquery.easydropdown.min.js"></script>
+</head>
+<body>
+<div id="main" style="width: 800px;height:500px;"></div>
+<select id="s" class="dropdown" tabindex="7">
+            <option value="teacher">教师</option>
+            <option value="department">部门</option>
+            <option value="course">课程</option>
+</select>
+<script>
+
+    $(function(){
+    	var s=document.getElementById("s");
+		var index=s.selectedIndex;
+		var choice=s.options[index].value;
+        $.ajax({
+            url:"logic/getAverageScoreByChoiceServlet",
+            data:{"choice":choice},
+            success:function(result){
+            	var jsonObj=JSON.parse(result);
+   	            var myChart = echarts.init(document.getElementById('main'));
+                option = {
+                    title: {
+                        text: '巡查数据TOP8',
+                        subtext: '',
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c}%"
+                    },
+                    toolbox: {
+                        feature: {
+                            dataView: {readOnly: false},
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    legend: {
+                        data: jsonObj["title"]
+                    },
+                    calculable: true,
+                    series: [
+                        {
+                            name:'漏斗图',
+                            type:'funnel',
+                            left: '10%',
+                            top: 60,
+                            //x2: 80,
+                            bottom: 60,
+                            width: '80%',
+
+                            min: 0,
+                            max: 100,
+                            minSize: '0%',
+                            maxSize: '100%',
+                            sort: 'descending',
+                            gap: 2,
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'inside'
+                                },
+                                emphasis: {
+                                    textStyle: {
+                                        fontSize: 20
+                                    }
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    length: 10,
+                                    lineStyle: {
+                                        width: 1,
+                                        type: 'solid'
+                                    }
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    borderColor: '#fff',
+                                    borderWidth: 1
+                                }
+                            },
+                            data: jsonObj["all"]
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+            },
+            error:function(){
+                alert("连接服务器失败");
+            }
+        });
+        
+        
+        s.onchange=function(){
+        	var index=s.selectedIndex;
+    		var choice=s.options[index].value;
+        	$.ajax({
+                url:"logic/getAverageScoreByChoiceServlet",
+                data:{"choice":choice},
+                success:function(result){
+                	var jsonObj=JSON.parse(result);
+       	            var myChart = echarts.init(document.getElementById('main'));
+                    option = {
+                        title: {
+                            
+                            subtext: ''
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b} : {c}%"
+                        },
+                        toolbox: {
+                            feature: {
+                                dataView: {readOnly: false},
+                                restore: {},
+                                saveAsImage: {}
+                            }
+                        },
+                        legend: {
+                            data: jsonObj["title"]
+                        },
+                        calculable: true,
+                        series: [
+                            {
+                                name:'漏斗图',
+                                type:'funnel',
+                                left: '10%',
+                                top: 60,
+                                //x2: 80,
+                                bottom: 60,
+                                width: '80%',
+
+                                min: 0,
+                                max: 100,
+                                minSize: '0%',
+                                maxSize: '100%',
+                                sort: 'descending',
+                                gap: 2,
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'inside'
+                                    },
+                                    emphasis: {
+                                        textStyle: {
+                                            fontSize: 20
+                                        }
+                                    }
+                                },
+                                labelLine: {
+                                    normal: {
+                                        length: 10,
+                                        lineStyle: {
+                                            width: 1,
+                                            type: 'solid'
+                                        }
+                                    }
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        borderColor: '#fff',
+                                        borderWidth: 1
+                                    }
+                                },
+                                data: jsonObj["all"]
+                            }
+                        ]
+                    };
+                    myChart.setOption(option);
+                },
+                error:function(){
+                    alert("连接服务器失败");
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

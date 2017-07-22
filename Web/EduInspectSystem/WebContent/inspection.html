@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>巡查记录</title>
+<link rel="stylesheet" type="text/css"
+	href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css"
+	href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css"
+	href="static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css">
+<script>
+	function searchUserInfoByBlurry() {
+		$.ajax({
+			type : "post",
+			url : "servlet/SearchCourseInfoServlet",
+			data : {
+				"course_id" : $("#course_id").val(),
+				"course_name" : $("#course_name").val(),
+				"department_id" : $("#department_id").val(),
+				"course_hour" : $("#course_hour").val(),
+				"course_credit" : $("#course_credit").val()
+			},
+			success : function(result) {
+				foreachJSON(result);
+			},
+			error : function() {
+				alert("请求服务器失败");
+			}
+		});
+	}
+</script>
+</head>
+
+<body>
+	<nav class="breadcrumb">
+		<i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+		巡查管理 <span class="c-gray en">&gt;</span>巡查记录 <a
+			class="btn btn-success radius r"
+			style="line-height: 1.6em; margin-top: 3px"
+			href="javascript:location.replace(location.href);" title="刷新"><i
+			class="Hui-iconfont">&#xe68f;</i></a>
+	</nav>
+	<div class="page-container">
+    <div class="text-c">
+        <input type="text" name="srchusername" id="srchusername" placeholder="用户名"
+               style="width: 100px; margin-right: 20px" class="input-text">
+        <input type="text" name="srchteaching_id" id="srchteaching_id" placeholder="授课号"
+               style="width: 100px; margin-right: 20px" class="input-text">
+        <input type="text" name="srchcourse_id" id="srchcourse_id" placeholder="课程号"
+               style="width: 150px; margin-right: 20px" class="input-text">
+        <input type="text" name="srchteacher_id" id="srchteacher_id" placeholder="职工号"
+               style="width: 100px; margin-right: 20px" class="input-text">
+        <input type="text" name="srchteaching_time" id="srchteaching_time" placeholder="授课时间"
+               style="width: 100px; margin-right: 20px" class="input-text">
+        巡查时间：<input type="text" onfocus="WdatePicker({ login_time:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}' })"
+                    id="srchinspect_time" name="srchinspect_time" class="input-text Wdate" style="width:150px;">
+                    <input type="text" name="srchteaching_place" id="srchteaching_place" placeholder="巡查地点"
+               style="width: 100px; margin-right: 20px" class="input-text">
+        <a class="btn btn-success" href="javascript:searchSysUserByBlurry()" style="margin-left: 10px;"><i
+                class="Hui-iconfont">&#xe665;</i>
+            查询</a>
+
+
+    </div>
+
+			<table class="table table-border table-bordered table-bg table-hover">
+				<thead>
+					<tr class="text-c">
+						<th width="25">#</th>
+						<th width="80">巡查员</th>
+						<th width="50">授课号</th>
+						<th width="50">课程号</th>
+						<th width="50">职工号</th>
+						<th width="100">授课时间</th>
+						<th width="100">巡查时间</th>
+						<th width="100">巡查地点</th>
+						<th width="45">缺勤数</th>
+						<th width="45">睡觉数</th>
+						<th width="45">玩手机数</th>
+						<th width="47">课堂纪律</th>
+						<th width="47">教师仪表</th>
+						<th width="47">讲课质量</th>
+						<th width="47">听课情况</th>
+						<th width="40">总分</th>
+						<th width="100">备注</th>
+					</tr>
+				</thead>
+				<tbody id="inspection_record">
+
+
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+	<div align="right">
+		<ul class="pagination" id="pager">
+			<li><a href="#" class="active">1</a></li>
+		</ul>
+	</div>
+
+
+
+
+	<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript"
+		src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+	<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+	<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+	<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+
+
+	<script>
+		$(function() {
+			getAllUserInfo();
+		});
+
+		function getUserTablePageCount(pagesize) {
+
+			var str = "";
+			$.ajax({
+				type : "get",
+				url : "logic/getUserTablePageCountServlet",
+				data : {
+					"pagesize" : pagesize,
+					"flag" : "teacher"
+				},
+
+				success : function(result) {
+					//alert(result);
+					for (var i = 0; i < result; i++) {
+						str += "<li><a href='javascript:getAllUserInfo(" + i
+								+ "," + pagesize + ")'>" + (i + 1)
+								+ "</a></li>";
+					}
+					//str+="第<input type='text' size='2' id='jumptoPage'/>页";
+					str += "<li><a href='#'>>></a></li>";
+					$("#pager").html(str);
+				},
+				error : function() {
+					alert("获取服务器失败");
+				}
+			});
+		}
+
+		function foreachJSON(result) {
+			var str = "";
+			$.each(JSON.parse(result), function(index, key) {
+				str += "<tr class='text-c'><td id=\"id" + (index + 1) + "\">"
+						+ (index + 1) + "</td><td id=\"username" + (index + 1)
+						+ "\">" + key.username + "</td><td id=\"teaching_id"
+						+ (index + 1) + "\">" + key.teaching_id
+						+ "</td><td id=\"course_id" + (index + 1) + "\">"
+						+ key.course_id + "</td><td id=\"teacher_id"
+						+ (index + 1) + "\">" + key.teacher_id
+						+ "</td><td id=\"teaching_time" + (index + 1) + "\">"
+						+ key.teaching_time + "</td><td id=\"inspection_time"
+						+ (index + 1) + "\">" + key.inspection_time
+						+ "</td><td id=\"inspection_place" + (index + 1)
+						+ "\">" + key.inspection_place
+						+ "</td><td id=\"num_absent" + (index + 1) + "\">"
+						+ key.num_absent + "</td><td id=\"num_sleep"
+						+ (index + 1) + "\">" + key.num_sleep
+						+ "</td><td id=\"num_phone" + (index + 1) + "\">"
+						+ key.num_phone + "</td><td id=\"teacherscore1"
+						+ (index + 1) + "\">" + key.teacherscore1
+						+ "</td><td id=\"teacherscore2" + (index + 1) + "\">"
+						+ key.teacherscore2 + "</td><td id=\"studentscore1"
+						+ (index + 1) + "\">" + key.studentscore1
+						+ "</td><td id=\"studentscore2" + (index + 1) + "\">"
+						+ key.studentscore2 + "</td><td id=\"totalscore"
+						+ (index + 1) + "\">" + key.totalscore
+						+ "</td><td id=\"inspect_remark" + (index + 1) + "\">"
+						+ key.inspect_remark + "</td>";
+			});
+			$("#inspection_record").html(str);
+		}
+
+		function getAllUserInfo() {
+			$.ajax({
+				type : "post",
+				url : "servlet/GetAllInspectRecordInfoServlet",
+				data : {
+					"page" : 0,
+					"pagesize" : 50
+				},
+				async : true,
+				success : function(result) {
+					foreachJSON(result);
+				},
+				error : function() {
+					alert("获取服务器失败");
+				}
+			});
+
+		}
+	</script>
+</body>
+
+</html>

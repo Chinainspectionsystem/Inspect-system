@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<title>登录</title>
+<link rel="Shortcut Icon" href="img/favicon.ico" />
+<script src="http://cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link
+	href="http://cdn.bootcss.com/pace/1.0.2/themes/green/pace-theme-flash.min.css"
+	rel="stylesheet">
+<script src="font/iconfont.js"></script>
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<link
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"
+	rel="stylesheet" type="text/css" />
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+
+<style>
+.icon {
+	width: 1em;
+	height: 1em;
+	vertical-align: -0.15em;
+	fill: currentColor;
+	overflow: hidden;
+	border: 0;
+	margin-right: 15px;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.layout {
+	width: 400px;
+	margin: 0 auto;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	border-radius: 10px;
+	transform: translate(-50%, -50%);
+	box-shadow: 2px 6px 12px 0 rgba(0, 0, 0, 0.3), -2px 8px 12px
+		rgba(0, 0, 0, 0.19);
+}
+
+.panel {
+	margin-bottom: 0;
+}
+
+.img-circle {
+	width: 30%;
+	margin: 10px 0;
+}
+
+.panel.panel-primary {
+	border: 0;
+}
+
+.panel-primary>.panel-heading {
+	background-color: #30b08f;
+	border: 0;
+	padding: 5px 15px;
+}
+
+.panel-body>img {
+	opacity: .7;
+	-webkit-transition: -webkit-transform .8s
+		cubic-bezier(0.455, 0.03, 0.515, 0.955);;
+	-moz-transition: -moz-transform .8s
+		cubic-bezier(0.455, 0.03, 0.515, 0.955);;
+	transition: transform .8s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.panel-body>img:hover {
+	webkit-transform: rotate(360deg) scale(1.1);
+	moz-transform: rotate(360deg) scale(1.1);
+	ms-transform: rotate(360deg) scale(1.1);
+	transform: rotate(360deg) scale(1.1);
+	box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.3);
+}
+/*security-code css*/
+.code {
+	font-family: Arial;
+	font-style: italic;
+	font-size: 30px;
+	border: 0;
+	padding: 2px 3px;
+	letter-spacing: 3px;
+	font-weight: bolder;
+	float: left;
+	cursor: pointer;
+	width: 28px;
+	height: 30px;
+	line-height: 23px;
+	text-align: center;
+	vertical-align: middle;
+}
+/*.codelayout{
+            background: url("https://ws1.sinaimg.cn/large/006tKfTcly1fh1bsoai77j309e08cwea.jpg");
+        }*/
+a:hover {
+	text-decoration: underline;
+}
+
+#security {
+	overflow: hidden;
+	width: 112px;
+}
+
+.security-wrap {
+	position: relative;
+}
+/*验证码出现的小图标改变颜色*/
+.glyphicon-remove:before {
+	content: "\e014";
+	color: #f44336;
+}
+
+.glyphicon-ok:before {
+	content: "\e013";
+	color: #4caf50;
+}
+/*登录按钮样式更改*/
+.btn {
+	transition: all .6s ease;
+}
+
+.btn-info {
+	background-color: #30b08f;
+	border: 0;
+}
+
+.btn-info:hover {
+	background-color: #2ecc71;
+}
+
+.btn-info:focus {
+	background-color: #30b08f;
+	border-color: #30b08f;
+}
+
+.btn:nth-child(1) {
+	margin-right: 10px;
+}
+/*底部调整*/
+.panel-footer {
+	padding: 5px 15px;
+}
+
+.panel-footer>div {
+	font-style: italic;
+}
+
+.register {
+	float: left;
+	color: #30b08f;
+	font-family: Arial, Helvetica, sans-serif;
+	margin-right: 15px;
+	font-size: 14px;
+	margin-top: -43px;
+	transition: all .6s ease;
+}
+
+.register:hover {
+	text-decoration: none;
+	color: #2ecc71;
+}
+</style>
+<script type="text/javascript">
+	function validateForm() {
+		var securitycode = document.getElementById("security-code");
+		var uname = document.getElementById("username");
+		var upwd = document.getElementById("password");
+		var tip = document.getElementById("tip");
+		if (username.value.length == 0) {
+
+			tip.innerHTML = "用户名不能为空";
+			tip.style.color = "red";
+			tip.style.marginBottom = "10px";
+			tip.style.marginTop = "-12px";
+			return false;
+		}
+		if (password.value.length == 0) {
+			tip.innerHTML = "密码不能为空";
+			tip.style.color = "red";
+			tip.style.marginBottom = "10px";
+			tip.style.marginTop = "-12px";
+			return false;
+		}
+		if (!validateCode(securitycode.value)) {
+			tip.innerHTML = "验证码错误";
+			tip.style.color = "red";
+			tip.style.marginBottom = "10px";
+			tip.style.marginTop = "-12px";
+			return false;
+		}
+		$.ajax({
+			url : "logic/loginServlet",
+			data : {
+				"username" : document.getElementById("username").value,
+				"password" : $("#password").val(),
+			},
+			success : function(result) {
+				if (result == "无") {
+					tip.innerHTML = "登录失败";
+					tip.style.color = "red";
+					tip.style.marginBottom = "10px";
+					tip.style.marginTop = "-12px";
+				} else if (result == "被屏蔽") {
+					tip.innerHTML = "该用户已被屏蔽，请联系管理员！";
+					tip.style.color = "red";
+					tip.style.marginBottom = "10px";
+					tip.style.marginTop = "-12px";
+				} else if (result == "管理员"){
+					window.location.href = "index_admin.html";
+				} else if (result == "巡查员"){
+					window.location.href = "index_inspector.html";
+				}else {
+					window.location.href = "login.html";
+				}
+			},
+			error : function() {
+				tip.innerHTML = "请求服务器失败";
+				tip.style.color = "red";
+				tip.style.marginBottom = "10px";
+				tip.style.marginTop = "-12px";
+			}
+
+		});
+
+		return false;
+	}
+
+	/*验证码*/
+	var code;
+
+	function createCode() {
+		code = "";
+		var codeLength = 4; //验证码的长度
+		var checkCode1 = document.getElementById("checkCode1");
+		var checkCode2 = document.getElementById("checkCode2");
+		var checkCode3 = document.getElementById("checkCode3");
+		var checkCode4 = document.getElementById("checkCode4");
+		var codeChars = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c',
+				'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+				'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A',
+				'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+				'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+		var codeColor = new Array('#4fabff', '#aedf07', '#ffb81c', '#b688ff',
+				'#df8178', '#ff00ff', '#ff5922', '#8973ff');
+		for (var i = 0; i < codeLength; i++) {
+			var charNum = Math.floor(Math.random() * 52);
+			code += codeChars[charNum];
+		}
+		if (checkCode1 && checkCode2 && checkCode3 && checkCode4) {
+			// checkCode.className = "code";
+			checkCode1.innerHTML = code.substring(0, 1);
+			checkCode1.style.color = codeColor[Math.floor(Math.random() * 9)];
+			checkCode2.innerHTML = code.substring(1, 2);
+			checkCode2.style.color = codeColor[Math.floor(Math.random() * 9)];
+			checkCode3.innerHTML = code.substring(2, 3);
+			checkCode3.style.color = codeColor[Math.floor(Math.random() * 9)];
+			checkCode4.innerHTML = code.substring(3, 4);
+			checkCode4.style.color = codeColor[Math.floor(Math.random() * 9)];
+		}
+	}
+
+	function validateCode(Code) {
+		var securitycode = document.getElementById("security-code");
+		if (Code.length <= 0) {
+			$(function() {
+				$("#security-wrap").find("a").remove();
+			});
+			var check_status = document.createElement("a");
+			check_status.className = "glyphicon glyphicon-remove";
+			check_status.style.position = "absolute";
+			check_status.style.cssFloat = "right";
+			check_status.style.top = "11px";
+			check_status.style.right = "4px";
+			check_status.style.textDecoration = "none";
+			securitycode.parentNode.insertBefore(check_status, securitycode);
+			return false;
+		} else if (Code.toUpperCase() != code.toUpperCase()) {
+			$(function() {
+				$("#security-wrap").find("a").remove();
+			});
+			var check_status = document.createElement("a");
+			check_status.className = "glyphicon glyphicon-remove";
+			check_status.style.position = "absolute";
+			check_status.style.cssFloat = "right";
+			check_status.style.top = "11px";
+			check_status.style.right = "4px";
+			check_status.style.textDecoration = "none";
+			securitycode.parentNode.insertBefore(check_status, securitycode);
+			createCode();
+		} else {
+			$(function() {
+				$("#security-wrap").find("a").remove();
+			});
+			var check_status = document.createElement("a");
+			check_status.className = "glyphicon glyphicon-ok";
+			check_status.style.position = "absolute";
+			check_status.style.cssFloat = "right";
+			check_status.style.top = "11px";
+			check_status.style.right = "4px";
+			check_status.style.textDecoration = "none";
+			securitycode.parentNode.insertBefore(check_status, securitycode);
+			return true;
+		}
+	}
+</script>
+</head>
+
+<body onload="createCode()">
+	<!--<div class="navbar-fixed-top">
+    <div class="navbar navbar-inverse">
+        <h3 class="text-warning" style="color: white">&nbsp;&nbsp;&nbsp;&nbsp;教务教学巡查系统</h3>
+    </div>
+</div>-->
+	<script type="text/javascript" count="130" opacity=".5"
+		src="js/canvas-nest.min.js"></script>
+
+	<div class="layout">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3>
+					<svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-gongsisvgtubiaozongji03"></use>
+                    </svg>
+					教务教学巡查系统登录
+				</h3>
+			</div>
+			<div class="panel-body" align="center">
+				<img
+					src="https://ws2.sinaimg.cn/large/006tNc79ly1fgrpi3k7xlj30rm0riglt.jpg"
+					class="img-circle" width="50%" /><br /> <br />
+				<form name="form" method="post" id=“form”>
+					<div id="tip"></div>
+					<input type="text" id="username" name="username"
+						class="form-control" placeholder="请输入用户名" required="required" />
+					<br /> <input type="password" id="password" name="password"
+						class="form-control" placeholder="请输入密码" required="required" /> <br />
+					<div class="security-wrap" id="security-wrap">
+						<input type="security-code" id="security-code"
+							name="security-code" class="form-control" placeholder="请输入验证码"
+							required="required"
+							onfocus="document.getElementById('security').style.display = 'block'"
+							onblur="validateCode(this.value)" />
+					</div>
+					<br />
+					<div class="codelayout" onclick="createCode()" id="security">
+						<div class="code" id="checkCode1"></div>
+						<div class="code" id="checkCode2"></div>
+						<div class="code" id="checkCode3"></div>
+						<div class="code" id="checkCode4"></div>
+					</div>
+					<hr>
+
+					<div align="right">
+						<a href="javascript:validateForm()"
+							class="btn btn-info glyphicon glyphicon-user"> 登录</a> <a
+							href="javascript:form.reset()"
+							class="btn btn-info glyphicon glyphicon-repeat"> 重置</a>
+					</div>
+					<br /> <a href="register.html" class="register ">注册 </a> <a
+						href="index.html#CONTACT" class="register "
+						style="margin-left: 50px">联系我们</a>
+				</form>
+			</div>
+			<div class="panel-footer">
+				<div align="center">&copy;2017-2018 Powered By TJPU</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript"
+		src="http://7u2ss1.com1.z0.glb.clouddn.com/love.js"></script>
+</body>
+
+</html>

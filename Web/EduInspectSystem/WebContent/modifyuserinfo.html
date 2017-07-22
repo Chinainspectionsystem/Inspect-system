@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+    <title>修改用户信息</title>
+    <script>
+    window.onload=function(){
+       	var id=parent.document.getElementById("current_id").innerHTML;
+        document.getElementById("updtusername").value=parent.document.getElementById("username"+id).innerHTML;
+        document.getElementById("updtrealname").value=parent.document.getElementById("realname"+id).innerHTML;
+        document.getElementById("updtgender").value=parent.document.getElementById("gender"+id).innerHTML;
+        document.getElementById("updtphone").value=parent.document.getElementById("phone"+id).innerHTML;
+        document.getElementById("updtbirthday").value=parent.document.getElementById("birthday"+id).innerHTML;
+ 
+    }
+    </script>
+    
+</head>
+
+<body>
+    <article class="page-container">
+        <form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3">用户名：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input type="text" class="input-text" value="" placeholder="" id="updtusername" name="updtusername" disabled>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>真实姓名：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input type="text" class="input-text" value="" placeholder="" id="updtrealname" name="updtrealname">
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <span class="select-box inline" style="margin-right:20px">
+                        <select name="updtgender" class="select" id="updtgender" >
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+			        </span>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>电话：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input type="number" class="input-number" value="" placeholder="" id="updtphone" name="updtphone">
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>生日：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input type="date" class="input-date" value="" placeholder="" id="updtbirthday" name="updtbirthday">
+                </div>
+            </div>
+
+            <div class="row cl">
+                <div style="width:50px;margin:0 auto;margin-top:10px;">
+                    <button type="submit" class="btn btn-warning radius" id="verify" name="verify"><i class="icon-ok"></i> 确定</button>
+                </div>
+            </div>
+        </form>
+    </article>
+
+    <!--_footer 作为公共模版分离出去-->
+    <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+    <!--/_footer 作为公共模版分离出去-->
+
+
+    <script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+    <script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script>
+    <script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script>
+
+
+</body>
+
+</html>

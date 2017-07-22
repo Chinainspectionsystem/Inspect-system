@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/3.6.2/echarts.min.js"></script>
+</head>
+<body>
+<div id="main" style="width: 600px; height: 500px;"></div>
+<script>
+    $(function () {
+        var myChart = echarts.init(document.getElementById('main'));
+        option = {
+            title: {
+                text: '老师询查评分对比'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['张建军', '韩巍']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['第一周', '第二周', '第三周', '第四周', '第五周', '第六周', '第七周']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '张建军',
+                    type: 'line',
+
+                    data: [71, 0, 47, 20, 80, 53, 90]
+                },
+                {
+                    name: '韩巍',
+                    type: 'line',
+
+                    data: [20, 20, 7, 53, 60, 60, 70]
+                }
+            ]
+        };
+
+        myChart.setOption(option);
+    });
+</script>
+</body>
+</html>

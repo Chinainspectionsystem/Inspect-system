@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>新用户注册</title>
+    <link rel="Shortcut Icon" href="img/favicon.ico" />
+    <script src="http://cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="http://cdn.bootcss.com/pace/1.0.2/themes/green/pace-theme-flash.min.css" rel="stylesheet">
+    <script src="font/iconfont.js"></script>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+	href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css"
+	href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css"
+	href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css"
+	href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css"
+	href="static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css">
+    <style>
+        .icon {
+            width: 1em;
+            height: 1em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+            border: 0;
+            margin-right: 15px;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .layout {
+            width: 400px;
+            margin: 0 auto;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            border-radius: 10px;
+            transform: translate(-50%, -50%);
+            box-shadow: 2px 6px 12px 0 rgba(0, 0, 0, 0.3), -2px 8px 12px rgba(0, 0, 0, 0.19);
+        }
+
+        .panel {
+            margin-bottom: 0;
+        }
+
+        .panel.panel-primary {
+            border: 0;
+        }
+
+        .panel-primary>.panel-heading {
+            background-color: #30b08f;
+            border: 0;
+            padding: 5px 15px;
+        }
+
+        .panel-footer {
+            padding: 5px 15px;
+        }
+
+        .panel-footer>div {
+            font-style: italic;
+        }
+
+        .btn {
+            transition: all .6s ease;
+        }
+
+        .btn-info {
+            background-color: #30b08f;
+            border: 0;
+        }
+
+        .btn-info:hover {
+            background-color: #2ecc71;
+        }
+
+        .btn-info:focus {
+            background-color: #30b08f;
+            border-color: #30b08f;
+        }
+
+        .btn:nth-child(1) {
+            margin-right: 10px;
+        }
+
+        .login {
+            float: left;
+            color: #30b08f;
+            font-family: Arial, Helvetica, sans-serif;
+            margin-right: 15px;
+            font-size: 14px;
+            margin-top: -43px;
+            transition: all .6s ease;
+        }
+
+        .login:hover {
+            text-decoration: none;
+            color: #2ecc71;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            $("#username").change(function () {
+                var username = $("#username").val();
+                if (username.length == 0) {
+                    tip.innerHTML = "用户名不能为空";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                } else {
+                    $.ajax({
+                        url: "/EduInspectSystem/logic/validateSysUsernameExistServlet",
+                        data: {
+                            "username": $("#username").val()
+                        },
+                        success: function (result) {
+                            if (result == "false") {
+                                tip.innerHTML = "用户名可以用！";
+                                tip.style.color = "green";
+                                tip.style.marginBottom = "10px";
+                                tip.style.display = "block";
+                                tip.style.textAlign = "center";
+                            } else {
+                                tip.innerHTML = "存在相同的用户名！请换一个";
+                                tip.style.color = "red";
+                                tip.style.marginBottom = "10px";
+                                tip.style.display = "block";
+                                tip.style.textAlign = "center";
+                                $("#username").val("");
+                            }
+                        },
+                        error: function () {
+                            tip.innerHTML = "请求服务器失败";
+                            tip.style.color = "red";
+                            tip.style.marginBottom = "10px";
+                            tip.style.display = "block";
+                            tip.style.textAlign = "center";
+                        }
+                    });
+                }
+            });
+            $("#register").click(function () {
+                var username = $("#username").val();
+                var tip = document.getElementById("tip");
+                var password = document.getElementById("password");
+                var realname = document.getElementById("realname");
+                var repassword = document.getElementById("repassword");
+                var telephone = document.getElementById("telephone");
+                var email = document.getElementById("email");
+                var teacher_id = document.getElementById("teacher_id");
+                if (username.length == 0) {
+                    tip.innerHTML = "用户名不能为空";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                if (realname.value.toString().length==0) {
+                    tip.innerHTML = "真实名不能为空";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                if (teacher_id.value.toString().length == 0) {
+                    tip.innerHTML = "职工号不能为空";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                if (password.value.toString().length == 0) {
+                    tip.innerHTML = "密码不能为空！";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                if (repassword.value.toString().length == 0) {
+                    tip.innerHTML = "请确认你的密码！";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                if (!(password.value === repassword.value)) {
+                    tip.innerHTML = " 两次密码不一致，请确认密码！";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                if (repassword.value.toString().length < 6 || repassword.value.toString().length > 20) {
+                    tip.innerHTML = " 密码长度至少6位，最多20位！";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                if (telephone.value.toString().length == 0) {
+                    tip.innerHTML = "手机号不能为空！";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                if (email.value.toString().length == 0) {
+                    tip.innerHTML = "邮箱不能为空！";
+                    tip.style.color = "red";
+                    tip.style.marginBottom = "10px";
+                    tip.style.display = "block";
+                    tip.style.textAlign = "center";
+                    return;
+                }
+                var param = $("#form").serialize();
+                $.ajax({
+                    url: "/EduInspectSystem/logic/registerServlet",
+                    data: param,
+                    /*  {
+                     "username" : $("#username").val(),
+                     "realname" : $("#realname").val(),
+                     "password" : $("#password").val(),
+                     "gender" : $("#gender").val(),
+                     "phone" : $("#phone").val(),
+                     "birthday" : $("#birthday").val()
+                     }, */
+                    success: function (result) {
+                        if (result == "true"){
+                        	$.Huimodalalert('正在审核中，请耐心等待！', 1000);
+                        	setTimeout(function() {
+                        		 window.location.href = "login.html";
+							}, 1500);
+                           
+                        }
+                        else {
+                            var tip = document.getElementById("tip");
+                            tip.innerHTML = "注册失败！";
+                            tip.style.color = "red";
+                            tip.style.marginBottom = "10px";
+                            tip.style.display = "block";
+                            tip.style.textAlign = "center";
+                        }
+
+                    },
+                    error: function () {
+                        var tip = document.getElementById("tip");
+                        tip.innerHTML = "请求服务器失败";
+                        tip.style.color = "red";
+                        tip.style.marginBottom = "10px";
+                        tip.style.display = "block";
+                        tip.style.textAlign = "center";
+                    }
+
+                });
+            });
+
+
+        });
+    </script>
+</head>
+
+<body>
+    <script type="text/javascript" count="150" opacity=".9" src="js/canvas-nest.min.js"></script>
+
+    <div class="layout">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3>
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-gongsisvgtubiaozongji03"></use>
+                    </svg>
+                    新用户注册
+                </h3>
+            </div>
+            <div class="panel-body">
+                <form id="form" name="form" action="">
+                    <span id="tip"></span>
+                    <input id="username" type="text" name="username" class="form-control" placeholder="请输入用户名" required="required" />
+                    <br/> <input type="text" id="realname" name="realname" class="form-control" placeholder="请输入真实姓名" required="required"
+                    /><br/>
+                    <input type="text" id="teacher_id" name="teacher_id" class="form-control" placeholder="请输入职工号" required="required" /><br/>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码" required="required" maxlength="20"
+                        minlength="6" /><br />
+                    <input type="password" id="repassword" name="repassword" class="form-control" placeholder="请输入确认密码" required="required" maxlength="20"
+                        minlength="6" /><br />
+                    <select class="form-control" id="gender" name="gender">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select> <br/>
+                    <input type="text" id="telephone" name="telephone" class="form-control" placeholder="请输入手机号码" required="required"/><br/>
+                    <input type="text" id="email" name="email" placeholder="输入邮箱" class="form-control" required="required"/> <br/>
+                    <div align="right">
+                        <a id="register" href="#" class="btn btn-info glyphicon glyphicon-user"> 注册</a>
+
+                        <a href="javascript:form.reset()" class="btn btn-info glyphicon glyphicon-repeat"> 重置</a>
+
+                    </div>
+                    <br/>
+                    <a href="login.html" class="login">已经注册?点击返回
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-jiantou3"></use>
+                    </svg>
+                </a>
+                </form>
+
+            </div>
+            <div class="panel-footer">
+                <div align="center">&copy;2017-2018 Powered By TJPU</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript" src="http://7u2ss1.com1.z0.glb.clouddn.com/love.js"></script>
+	<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript"
+		src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+	<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+	<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+	<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>系统用户</title>
+    <link rel="stylesheet" type="text/css"
+          href="static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/h-ui.admin/skin/default/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/h-ui.admin/css/style.css"/>
+    <link rel="stylesheet" type="text/css">
+    <script>
+        function show(index, id) {
+            $("#modal-updatepersoninfo").modal("show");
+            document.getElementById("updtusername").value= document.getElementById("username"+index).innerHTML;
+                document.getElementById("updtrealname").value = document
+                    .getElementById("realname" + index).innerHTML;
+            document.getElementById("updtteacherid").value = document
+                .getElementById("teacher_id" + index).innerHTML;
+            document.getElementById("updtregister_time").value = document
+                .getElementById("register_time" + index).innerHTML;
+            document.getElementById("updtgender").value = document
+                .getElementById("gender" + index).innerHTML;
+            document.getElementById("updtphone").value = document
+                .getElementById("telephone" + index).innerHTML;
+            document.getElementById("updtemail").value = document
+                .getElementById("email" + index).innerHTML;
+        }
+		function modifyuser(){
+			if(document.getElementById("updtphone").value.length==0){
+				layer.msg('电话不能为空！', {
+                    time: 2000,
+                    icon: 5
+                });
+                return false;
+			}
+			if (document.getElementById("updtemail").value.length==0){
+				layer.msg('邮箱不能为空！', {
+                    time: 2000,
+                    icon: 5
+                });
+                return false;
+			}else {
+                $.ajax({
+                        url: "logic/updateSysUserRoleServlet2",
+                        data: {
+                            "telephone": document
+                                .getElementById("updtphone").value,
+                            "email": document
+                                .getElementById("updtemail").value,
+                            "username": document
+                                .getElementById("updtusername").value
+                        },
+                        success: function (result) {
+                            if (result == "true") {
+                                $.Huimodalalert('哈哈哈，修改成功！', 2000);
+                                $("#modal-updatepersoninfo").modal("hide")
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 1000);
+
+                            } else {
+                                layer.msg('修改失败', {
+                                    time: 2000,
+                                    icon: 5
+                                });
+                            }
+                        },
+                        error: function () {
+                            layer.msg('请求服务器失败！', {
+                                time: 2000,
+                                icon: 5
+                            });
+                        }
+
+                    });
+            }
+		}
+    	function checkallchkbox(){
+  		  var ch = document.getElementsByName("chkbox");
+            if (document.getElementsByName("checkallbox")[0].checked == true) {
+                for (var i = 0; i < ch.length; i++) {
+                    ch[i].checked = true;
+                }
+            } else {
+                for (var i = 0; i < ch.length; i++) {
+                    ch[i].checked = false;
+                }
+            }
+
+  	}
+  	function selectpagesize(){
+  		var slctpagesize = $("#selectpagesize").val();
+  		pagesize = slctpagesize;
+		getAllUserInfo(page,pagesize);
+  		getUserTablePageCount(pagesize);
+  	}
+  	function searchSysUserByBlurry() {
+  		$.ajax({
+  			url : "/EduInspectSystem/logic/getSysUserByBlurryServlet",
+  			data : {
+  				"page" : 0,
+  				"pagesize" : pagesize,
+  				"srchusername" : $("#srchusername").val(),
+  				"srchrealname" : $("#srchrealname").val(),
+  				"srchteacher_id" : $("#srchteacher_id").val(),
+  				"srchgender" : $("#srchgender").val(),
+  				"srchrole" : $("#srchrole").val(),
+  				"srchregister_time" : $("#srchregister_time").val()
+  			},
+  			success : function(result) {
+  				foreachJSON(result);
+  				str = "<li><a href='#'>1</a></li>";
+				$("#pager").html(str);
+  			},
+  			error : function() {
+  				alert("请求服务器失败");
+  			}
+  		});
+  	}
+  	function deleteSysUserByUsername(current_id,dltusername) {
+  		//document.getElementById("current_id").innerHTML=current_id;
+  		layer.confirm('确认要删除吗？', function() {
+  			$.ajax({
+  				url : "/EduInspectSystem/logic/deleteSysUserByUsername",
+  				data : {
+  					"page" : page,
+  					"pagesize" : pagesize,
+  					"delusername" : dltusername
+  				},
+  				success : function(result) {
+  					if (result == "false") {
+  						layer.msg('删除失败!', {
+  							icon : 1,
+  							time : 1000
+  					});
+  					} else {
+  						foreachJSON(result);
+  						getUserTablePageCount(pagesize);
+  						layer.msg('已删除!', {
+  							icon : 1,
+  							time : 1000
+  						});
+  					}
+  				},
+  				error : function() {
+  					layer.msg('请求服务器失败', {
+  						icon : 2,
+  						time : 1000
+  					});
+  				}
+  			});
+  		});
+
+  	}
+    </script>
+</head>
+<body>
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+    系统管理 <span class="c-gray en">&gt;</span>系统用户
+    <a class="btn btn-success radius r" style="line-height: 1.6em; margin-top: 3px"
+       href="javascript:location.replace(location.href);" title="刷新"><i
+            class="Hui-iconfont">&#xe68f;</i></a>
+</nav>
+
+<div class="page-container">
+    <div class="text-c">
+        <input type="text" name="srchusername" id="srchusername" placeholder="用户名"
+               style="width: 120px; margin-right: 20px" class="input-text">
+        <input type="text" name="srchrealname" id="srchrealname" placeholder="姓名"
+               style="width: 120px; margin-right: 20px" class="input-text">
+        <input type="text" name="srchteacher_id" id="srchteacher_id" placeholder="职工号"
+               style="width: 150px; margin-right: 20px" class="input-text">
+        性别： <span class="select-box inline" style="margin-right: 20px">
+				<select name="srchgender" class="select" id="srchgender">
+					<option value="">请选择</option>
+					<option value="男">男</option>
+					<option value="女">女</option>
+			</select>
+        </span>
+        状态： <span class="select-box inline" style="margin-right: 10px">
+				<select name="srchrole" class="select" id="srchrole">
+					<option value="">请选择</option>
+					<option value="巡查员">巡查员</option>
+					<option value="管理员">管理员</option>
+					<option value="被屏蔽">被屏蔽</option>
+			</select>
+			</span>
+        日期选择：<input type="text" onfocus="WdatePicker({ login_time:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}' })"
+                    id="srchregister_time" name="srchregister_time" class="input-text Wdate" style="width:150px;">
+        <a class="btn btn-success" href="javascript:searchSysUserByBlurry()" style="margin-left: 10px;"><i
+                class="Hui-iconfont">&#xe665;</i>
+            查询</a>
+
+
+    </div>
+
+    <div class="cl pd-5 bg-1 bk-gray mt-20 clearfix">
+			<span class="l"> <a href="javascript:;" onclick=""
+                                class="btn btn-danger radius" id="batch_delete"> <i class="Hui-iconfont">&#xe6e2;</i>
+					批量删除
+			</a>
+			</span>
+    </div>
+ 	<span class="l" style="margin:10px;">
+		<input id="checkallbox" name="checkallbox" onclick="checkallchkbox()" class="btn radius" style="margin-left:12px;padding-left:50px;" type="checkbox">
+		全选
+	</span>
+    <span class="r" style="padding:10px 0 10px 0;">
+
+		每页显示的条数
+		<select name="selectpagesize" id="selectpagesize" onchange="selectpagesize()">
+					<option value="5">5</option>
+					<option value="10">10</option>
+					<option value="20">20</option>
+					<option value="50">50</option>
+		</select>
+	</span>
+
+    <div class="mt-20">
+        <table
+                class="table table-border table-bordered table-bg table-hover">
+            <thead>
+            <tr class="text-c">
+                <th width="30">选择</th>
+                <th width="50">#</th>
+                <th width="100">用户名</th>
+                <th width="100">姓名</th>
+                <th width="50">职工号</th>
+                <th width="33">性别</th>
+                <th width="120">手机号</th>
+                <th width="140">邮箱</th>
+                <th width="140">注册时间</th>
+                <th width="70">状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="userinfo">
+
+            </tbody>
+        </table>
+    </div>
+
+    <!--修改个人信息模态框-->
+    <div id="modal-updatepersoninfo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content radius">
+                <div class="modal-header">
+                    <h3 class="modal-title">个人信息</h3>
+                    <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void(0);">×</a>
+                </div>
+                <div class="modal-body">
+                    <article class="page-container">
+                        <form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3">用户名：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder="" id="updtusername" name="updtusername" readonly>
+                                </div>
+                            </div>
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>真实姓名：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder="" id="updtrealname" name="updtrealname" readonly>
+                                </div>
+                            </div>
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>职工号：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder="" id="updtteacherid" name="updtteacherid" readonly>
+                                </div>
+                            </div>
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder="" id="updtgender" name="updtgender" readonly>
+                                </div>
+                            </div>
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机号：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder="" id="updtphone" name="updtphone">
+                                </div>
+                            </div>
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>邮箱：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder="" id="updtemail" name="updtemail">
+                                </div>
+                            </div>
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>注册时间：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" readonly="readonly" class="input-text" value="" placeholder="" id="updtregister_time" name="updtregister_time">
+                                </div>
+                            </div>
+
+                            <div class="row cl">
+                                <div style="width:50px;margin:0 auto;margin-top:10px;">
+                                    <button type="submit" class="btn btn-primary radius" id="verify" name="verify" onclick="modifyuser()"><i class="icon-ok"></i> 确定</button>
+                                </div>
+                            </div>
+                        </form>
+                    </article>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div align="right">
+    <ul class="pagination" id="pager">
+
+    </ul>
+</div>
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+        src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript"
+        src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+<script>
+    $(function () {
+        $("#batch_delete").click(function () {
+            layer.confirm('确认要批量删除吗？', function () {
+                $("input[name='chkbox']:checked").each(function () {
+                    n = $(this).parents("tr").index() + 1;
+                    var dltusername = document.getElementById("username" + n).innerHTML;
+                    $.ajax({
+                        url: "/EduInspectSystem/logic/deleteSysUserByUsername",
+                        data: {
+                        	"page" : page,
+          					"pagesize" : pagesize,
+                        	"delusername": dltusername
+                        },
+                        success: function (result) {
+                            if (result == "false") {
+                                layer.msg('删除失败!', {
+                                    icon: 1,
+                                    time: 1000
+                                });
+                            } else {
+                                location.replace(location.href);
+                            }
+                        },
+                        error: function () {
+                            layer.msg('请求服务器失败', {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    });
+                });
+            })
+
+        });
+    });
+page = 0;
+pagesize = 5;
+	$(function() {
+		getUserTablePageCount(pagesize);
+		getAllUserInfo(page,pagesize);
+	});
+
+	function getUserTablePageCount(pagesize) {
+
+		var str = "";
+		$.ajax({
+			type: "get",
+			url: "/EduInspectSystem/logic/getSysUserTablePageCountServlet",
+			data: {
+				"pagesize": pagesize
+			},
+
+
+			success: function(result) {
+				for(var i = 0; i < result; i++) {
+					str += "<li><a href='javascript:getAllUserInfo(" + i + "," + pagesize + ")'>" + (i + 1) + "</a></li>";
+				}
+				str += "<li><a href='#'>>></a></li>";
+				$("#pager").html(str);
+			},
+			error: function() {
+				alert("获取服务器失败");
+			}
+		});
+	}
+
+	function getAllUserInfo(page2,pagesize2) {
+		page = page2;
+		pagesize = pagesize2;
+
+		$.ajax({
+			type : "get",
+			url : "/EduInspectSystem/logic/getAllSysUserByPageServlet",
+			data : {
+				"page" : page,
+				"pagesize" : pagesize
+			},
+			async : true,
+			success : function(result) {
+				foreachJSON(result);
+			},
+			error : function() {
+				alert("获取服务器失败");
+			}
+		});
+
+	}
+
+	function foreachJSON(result) {
+			var str = "";
+			$.each(
+						JSON.parse(result),
+						function(index, key) {
+							if(key.role==="管理员")
+								str += "<tr class='text-c'><td><input type='checkbox' name='chkbox' value=" + key.id + "/></td><td id=\"id"+(index+1)+"\">"+ (index + 1)+ "</td><td id=\"username"+(index+1)+"\">"+ key.username + "</td><td id=\"realname"+(index+1)+"\">"+ key.realname+ "</td><td id=\"teacher_id"+(index+1)+"\">"+ key.teacher_id+ "</td><td id=\"gender"+(index+1)+"\">"+ key.gender+ "</td><td id=\"telephone"+(index+1)+"\">"+ key.telephone+ "</td><td id=\"email"+(index+1)+"\">"+ key.email+ "</td><td  id=\"register_time"+(index+1)+"\">"+ key.register_time+ "</td><td class='td-status'><span style='cursor: pointer' class='label label-success radius' onclick='shenhe(this,\"" + key.username + "\")'>管理员</span></td><td class='f-14 td-manage'>" + "<a style='text-decoration:none' class='ml-5'  href='javascript:show("+ (index + 1)+ "," + "\"" + key.username + "\")' title='编辑'><i class='Hui-iconfont'>&#xe6df;</i></a>" + "<a style='text-decoration:none' class='ml-5'  href='javascript:deleteSysUserByUsername("+ (index + 1)+","+"\""+ key.username+ "\")' title='删除'><i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+							if(key.role==="巡查员")
+								str += "<tr class='text-c'><td><input type='checkbox' name='chkbox' value=" + key.id + "/></td><td id=\"id"+(index+1)+"\">"+ (index + 1)+ "</td><td id=\"username"+(index+1)+"\">"+ key.username + "</td><td id=\"realname"+(index+1)+"\">"+ key.realname+ "</td><td id=\"teacher_id"+(index+1)+"\">"+ key.teacher_id+ "</td><td id=\"gender"+(index+1)+"\">"+ key.gender+ "</td><td id=\"telephone"+(index+1)+"\">"+ key.telephone+ "</td><td id=\"email"+(index+1)+"\">"+ key.email+ "</td><td  id=\"register_time"+(index+1)+"\">"+ key.register_time+ "</td><td class='td-status'><span style='cursor: pointer' class='label label-primary radius' onclick='shenhe(this,\"" + key.username + "\")'>巡查员</span></td><td class='f-14 td-manage'>" + "<a style='text-decoration:none' class='ml-5'  href='javascript:show("+ (index + 1)+ "," + "\"" + key.username + "\")' title='编辑'><i class='Hui-iconfont'>&#xe6df;</i></a>" + "<a style='text-decoration:none' class='ml-5'  href='javascript:deleteSysUserByUsername("+ (index + 1)+","+"\""+ key.username+ "\")' title='删除'><i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+							if(key.role==="被屏蔽")
+								str += "<tr class='text-c'><td><input type='checkbox' name='chkbox' value=" + key.id + "/></td><td id=\"id"+(index+1)+"\">"+ (index + 1)+ "</td><td id=\"username"+(index+1)+"\">"+ key.username + "</td><td id=\"realname"+(index+1)+"\">"+ key.realname+ "</td><td id=\"teacher_id"+(index+1)+"\">"+ key.teacher_id+ "</td><td id=\"gender"+(index+1)+"\">"+ key.gender+ "</td><td id=\"telephone"+(index+1)+"\">"+ key.telephone+ "</td><td id=\"email"+(index+1)+"\">"+ key.email+ "</td><td  id=\"register_time"+(index+1)+"\">"+ key.register_time+ "</td><td class='td-status'><span style='cursor: pointer' class='label label-default radius' onclick='shenhe(this,\"" + key.username + "\")'>被屏蔽</span></td><td class='f-14 td-manage'>" + "<a style='text-decoration:none' class='ml-5'  href='javascript:show("+ (index + 1)+ "," + "\"" + key.username + "\")' title='编辑'><i class='Hui-iconfont'>&#xe6df;</i></a>" + "<a style='text-decoration:none' class='ml-5'  href='javascript:deleteSysUserByUsername("+ (index + 1)+","+"\""+ key.username+ "\")' title='删除'><i class='Hui-iconfont'>&#xe6e2;</i></a></td></tr>";
+						});
+			$("#userinfo").html(str);
+	}
+
+    function shenhe(obj, username) {
+        layer.confirm(
+            '权限', {
+                btn: ['巡查员', '管理员', '屏蔽', '取消'],
+                shade: false,
+                closeBtn: 0,
+                btn3: function () {
+                	layer.confirm('确认屏蔽吗？', function() {
+            			$.ajax({
+            				url : "/EduInspectSystem/logic/updateSysUserRoleServlet",
+            				data : {
+            					"username" : username,
+            					"role":"被屏蔽"
+            				},
+            				success : function(result) {
+            					if (result == "false") {
+            						layer.msg('修改权限失败!', {
+            							icon : 1,
+            							time : 1000
+            					});
+            					} else {
+            						$(obj)
+                                    .parents("tr")
+                                    .find(".td-status")
+                                    .html(
+                                        "<span style='cursor: pointer' class='label label-default radius' onclick='shenhe(this,\"" +username + "\")'>被屏蔽</span>"
+                                    );
+                                $(obj).remove();
+                                layer.msg('屏蔽', {
+                                    icon: 6,
+                                    time: 1000
+                                });
+            					}
+            				},
+            				error : function() {
+            					layer.msg('请求服务器失败', {
+            						icon : 2,
+            						time : 1000
+            					});
+            				}
+            			});
+            		});
+
+                },
+            },
+
+            function () {
+            	  layer.confirm('确认改为巡查员吗？', function() {
+            			$.ajax({
+            				url : "/EduInspectSystem/logic/updateSysUserRoleServlet",
+            				data : {
+            					"username" : username,
+            					"role":"巡查员"
+            				},
+            				success : function(result) {
+            					if (result == "false") {
+            						layer.msg('修改权限失败!', {
+            							icon : 1,
+            							time : 1000
+            					});
+            					} else {
+            		                $(obj)
+            	                    .parents("tr")
+            	                    .find(".td-status")
+            	                    .html(
+            	                    	"<span style='cursor: pointer' class='label label-primary radius' onclick='shenhe(this,\"" +username + "\")'>巡查员</span>"
+            	                        );
+            	                $(obj).remove();
+            	                layer.msg('巡查员', {
+            	                    icon: 6,
+            	                    time: 1000
+            	                });
+            					}
+            				},
+            				error : function() {
+            					layer.msg('请求服务器失败', {
+            						icon : 2,
+            						time : 1000
+            					});
+            				}
+            			});
+            		});
+
+            },
+            function () {
+               layer.confirm('确认改为管理员吗？', function() {
+          			$.ajax({
+          				url : "/EduInspectSystem/logic/updateSysUserRoleServlet",
+          				data : {
+          					"username" : username,
+          					"role":"管理员"
+          				},
+          				success : function(result) {
+          					if (result == "false") {
+          						layer.msg('修改权限失败!', {
+          							icon : 1,
+          							time : 1000
+          					});
+          					} else {
+          						 $(obj)
+          	                    .parents("tr")
+          	                    .find(".td-status")
+          	                    .html(
+          	                    		"<span style='cursor: pointer' class='label label-success radius' onclick='shenhe(this,\"" +username + "\")'>管理员</span>"
+          	                    		);
+          	                $(obj).remove();
+
+          		                layer.msg('管理员', {
+          		                    icon: 6,
+          		                    time: 1000
+          		                });
+          					}
+          				},
+          				error : function() {
+          					layer.msg('请求服务器失败', {
+          						icon : 2,
+          						time : 1000
+          					});
+          				}
+          			});
+          		});
+            });
+    }
+
+
+</script>
+</body>
+</html>

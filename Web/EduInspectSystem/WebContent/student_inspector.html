@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>班级管理</title>
+    <link rel="stylesheet" type="text/css"
+          href="static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/h-ui.admin/skin/default/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css"
+          href="static/h-ui.admin/css/style.css"/>
+    <script>
+        function show(index,id) {
+            $("#modal-modifystudent").modal("show");
+            document.getElementById("updtstudent_name").value=document.getElementById("student_name"+index).innerHTML;
+            document.getElementById("updtdepartment_id").value=document.getElementById("department_id_hidden"+index).innerHTML;
+            document.getElementById("updtclass_name").value=document.getElementById("class_name"+index).innerHTML;
+            document.getElementById("updtgender").value=document.getElementById("gender"+index).innerHTML;
+            document.getElementById("updtstudent_id").value=document.getElementById("student_id"+index).innerHTML;
+        }
+        function modifystudent() {
+            if (document.getElementById("updtstudent_name").value.length==0){
+                layer.msg('学生姓名不能为空！', {
+                    time: 2000,
+                    icon: 5
+                });
+                return false;
+            }
+            if ( document.getElementById("updtclass_name").value.length==0){
+                layer.msg('班级不能为空！', {
+                    time: 2000,
+                    icon: 5
+                });
+                return false;
+            }
+            else {
+                $.ajax({
+                    type: "post",
+                    url: "servlet/EditStudentsInfoServlet",
+                    data: {
+                        "student_id":document.getElementById("updtstudent_id").value,
+                        "student_name": document.getElementById("updtstudent_name").value,
+                        "department_id": document.getElementById("updtdepartment_id").value,
+                        "class_name": document.getElementById("updtclass_name").value,
+                        "gender": document.getElementById("updtgender").value
+                    },
+                    success: function (result) {
+                        if (result == "1") {
+                            $.Huimodalalert('哈哈哈，修改成功！', 2000);
+                            $("#modal-modifystudent").modal("hide")
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 1000);
+
+
+                        } else {
+                            layer.msg('修改失败', {
+                                time: 2000,
+                                icon: 5
+                            });
+                        }
+                    },
+                    error: function () {
+                        layer.msg('请求服务器失败！', {
+                            time: 2000,
+                            icon: 5
+                        });
+                    }
+
+                });
+            }
+
+
+
+        }
+        function selectpagesize() {
+            var slctpagesize = $("#selectpagesize").val();
+            pagesize = slctpagesize;
+            getAllUserInfo(0, pagesize);
+            getUserTablePageCount(pagesize);
+        }
+        function checkallchkbox(){
+            var ch = document.getElementsByName("chkbox");
+            if (document.getElementsByName("checkallbox")[0].checked == true) {
+                for (var i = 0; i < ch.length; i++) {
+                    ch[i].checked = true;
+                }
+            } else {
+                for (var i = 0; i < ch.length; i++) {
+                    ch[i].checked = false;
+                }
+            }
+
+        }
+        function searchUserInfoByBlurry() {
+            $.ajax({
+                type: "post",
+                url : "servlet/SearchStudentsInfoServlet",
+                data : {
+                    "page": 0,
+                    "pagesize": pagesize,
+                    "student_id" : $("#student_id").val(),
+                    "student_name" : $("#student_name").val(),
+                    "department_id" : $("#department_id").val(),
+                    "class_name" : $("#class_name").val(),
+                    "gender" : $("#gender").val(),
+                    "telephone" : $("#telephone").val(),
+                    "email" :$("#email").val()
+                },
+                success : function(result) {
+                    foreachJSON(result);
+                    str = "<li><a href='#'>1</a></li>";
+    				$("#pager").html(str);s
+                },
+                error : function() {
+                    alert("请求服务器失败");
+                }
+            });
+        }
+
+        function deleteUserInfoByUsername(dltusername) {
+            layer.confirm('确认要删除吗？', function() {
+                $.ajax({
+                    type: "post",
+                    url : "servlet/DeleteStudentsInfoServlet",
+                    data : {
+                        "student_id" : dltusername
+                    },
+                    success : function(result) {
+
+                        if (result == "0") {
+                            layer.msg('删除失败!', {
+                                icon : 1,
+                                time : 1000
+                            });
+                        } else {
+                            location.replace(location.href);
+
+                        }
+                    },
+                    error : function() {
+                        layer.msg('请求服务器失败', {
+                            icon : 2,
+                            time : 1000
+                        });
+                    }
+                });
+            });
+
+        }
+    </script>
+</head>
+<body>
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+    教务管理 <span class="c-gray en">&gt;</span>学生管理
+    <a class="btn btn-success radius r" style="line-height: 1.6em; margin-top: 3px"
+       href="javascript:location.replace(location.href);" title="刷新"><i
+            class="Hui-iconfont">&#xe68f;</i></a>
+</nav>
+
+<div class="page-container">
+    <div class="text-c">
+        <input type="text" name="student_id" id="student_id" placeholder="学号"
+               style="width: 130px; margin-right: 20px" class="input-text">
+        <input type="text" name="student_name" id="student_name" placeholder="姓名"
+               style="width: 130px; margin-right: 20px" class="input-text">
+
+        部门： <span class="select-box inline" style="margin-right: 20px">
+				<select name="department_id" class="select" id="department_id">
+					
+			</select>
+        </span>
+        <input type="text" name="class_name" id="class_name" placeholder="班级"
+               style="width: 150px; margin-right: 20px" class="input-text">
+        性别： <span class="select-box inline" style="margin-right: 20px">
+				<select name="gender" class="select" id="gender">
+					<option value="男">男</option>
+					<option value="女">女</option>
+			</select>
+        </span>
+        <a class="btn btn-secondary" href="javascript:searchUserInfoByBlurry()" style="margin-left: 10px;"><i
+                class="Hui-iconfont">&#xe665;</i>
+            查询</a>
+
+
+    </div>
+
+    <div class="cl pd-5 bg-1 bk-gray mt-20 clearfix">
+			<span class="l"> 
+			</span>
+    </div>
+    <span class="l" style="margin:10px; vertical-align: middle">
+		<input href="javascript:;" onclick="checkallchkbox()"
+               class="" style="margin-right:10px;padding:5px;" type="checkbox" name="checkallbox">
+        </a>全选
+
+	</span>
+    <span class="r" style="padding:10px 0 10px 0;">
+
+		每页显示的条数
+		<select name="selectpagesize" id="selectpagesize" onchange="selectpagesize()">
+                    <option value="5">5</option>
+					<option value="10">10</option>
+					<option value="20">20</option>
+					<option value="50">50</option>
+		</select>
+	</span>
+
+
+    <div class="mt-20">
+        <table
+                class="table table-border table-bordered table-bg table-hover">
+            <thead>
+            <tr class="text-c">
+                <th width="50">选择</th>
+                <th width="50">#</th>
+                <th width="100">学号</th>
+                <th width="100">姓名</th>
+                <th width="130">部门</th>
+                <th width="100">班级</th>
+                <th width="50">性别</th>
+                <th width="170">手机号</th>
+                <th width="170">邮箱</th>
+            </tr>
+            </thead>
+            <tbody id="student_manager">
+            <!--<tr class="text-c">-->
+                <!--<td><input type="checkbox" value="" name=""></td>-->
+                <!--<td>1001</td>-->
+                <!--<td>xsdsd</td>-->
+                <!--<td>管理</td>-->
+                <!--<td>男</td>-->
+                <!--<td>xxxxxxxxxxx</td>-->
+                <!--<td>admin@qq.com</td>-->
+                <!--<td class="f-14 td-manage">-->
+                    <!--<a style="text-decoration:none" class="ml-5" href="javascript:modifystudent();"-->
+                       <!--title="编辑">-->
+                        <!--<i class="Hui-iconfont">&#xe6df;</i></a>-->
+                    <!--<a style="text-decoration:none" class="ml-5" onClick="del(this,'10001')" href="javascript:;"-->
+                       <!--title="删除">-->
+                        <!--<i class="Hui-iconfont">&#xe6e2;</i></a></td>-->
+            <!--</tr>-->
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <!--修改模态框-->
+    <div id="modal-modifystudent" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content radius">
+                <div class="modal-header">
+                    <h3 class="modal-title">修改</h3>
+                    <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void(0);">×</a>
+                </div>
+                <div class="modal-body">
+                    <article class="page-container">
+                        <form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3">学号：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder="" id="updtstudent_id"
+                                           name="updtstudent_id" readonly>
+                                </div>
+                            </div>
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3">姓名：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder=""
+                                           id="updtstudent_name" name="updtstudent_name" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3">部门：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <span class="select-box inline" style="margin-right: 20px">
+                                    <select name="updtdepartment_id" class="select" id="updtdepartment_id">
+
+                                    </select>
+                                </span>
+                                </div>
+                            </div>
+
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3">班级：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <input type="text" class="input-text" value="" placeholder="" id="updtclass_name"
+                                           name="updtclass_name">
+                                </div>
+                            </div>
+
+                            <div class="row cl">
+                                <label class="form-label col-xs-4 col-sm-3">性别：</label>
+                                <div class="formControls col-xs-8 col-sm-9">
+                                    <span class="select-box inline" style="margin-right: 20px">
+                                <select name="updtgender" class="select" id="updtgender">
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row cl">
+                                <div style="width:50px;margin:0 auto;margin-top:10px;">
+                                    <a class="btn btn-success radius" id="verify" name="verify" onclick="modifystudent()"><i
+                                            class="icon-ok" ></i> 确定
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </article>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div align="right">
+    <ul class="pagination" id="pager">
+        <!--<li><a href="#">&laquo;</a></li>-->
+        <!--<li><a href="#" class="active">1</a></li>-->
+        <!--<li><a href="#">2</a></li>-->
+        <!--<li><a href="#">3</a></li>-->
+        <!--<li><a href="#">&raquo;</a></li>-->
+    </ul>
+</div>
+
+
+
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+
+
+<script>
+    $(function () {
+        $("#batch_delete").click(function () {
+            layer.confirm('确认要批量删除吗？', function () {
+                $("input[name='chkbox']:checked").each(function () {
+                    n = $(this).parents("tr").index() + 1;
+                    var delall = document.getElementById("student_id" + n).innerHTML;
+                    $.ajax({
+                        type: "post",
+                        url: "servlet/DeleteStudentsInfoServlet",
+                        data: {
+                            "student_id": delall
+                        },
+                        success: function (result) {
+
+                            if (result == "0") {
+                                layer.msg('删除失败!', {
+                                    icon: 1,
+                                    time: 1000
+                                });
+                            } else {
+                                location.replace(location.href);
+
+                            }
+                        },
+                        error: function () {
+                            layer.msg('请求服务器失败', {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    });
+                });
+            })
+
+        });
+    });
+    page = 0;
+    pagesize = 5;
+    $(function() {
+        getUserTablePageCount(pagesize);
+        getAllUserInfo(page, pagesize);
+        getalldepartment(page, pagesize)
+    });
+    function foreachJSON(result) {
+        var str = "";
+        $
+            .each(
+                JSON.parse(result),
+                function(index, key) {
+                    str += "<tr class='text-c'><td><input name='chkbox' type='checkbox' value=" + key.id + " /></td><td id=\"id"+(index+1)+"\">"+ (index + 1)+ "</td><td id=\"student_id"
+                        + (index + 1)
+                        + "\">"
+                        + key.student_id
+                        + "</td><td id=\"student_name"
+                        + (index + 1)
+                        + "\">"
+                        + key.student_name
+                        + "</td><td id=\"department_id"
+                        + (index + 1)
+                        + "\">"
+                        + key.department_name
+                        + "</td><td id=\"class_name"
+                        + (index + 1)
+                        + "\">"
+                        + key.class_name
+                        + "</td><td  id=\"gender"
+                        + (index + 1)
+                        + "\">"
+                        + key.gender
+                        + "</td><td id=\"telephone"
+                        + (index + 1)
+                        + "\">"
+                        + key.telephone
+                        + "</td><td id=\"email"
+                        + (index + 1)
+                        + "\">"
+                        + key.email
+                        + "</td><td id=\"department_id_hidden"
+                        + (index + 1)
+                        + "\" style='display:none'>"
+                        + key.department_id
+                        + "</td></tr>";
+                });
+        $("#student_manager").html(str);
+    }
+    function getUserTablePageCount(pagesize) {
+
+        var str = "";
+        $.ajax({
+            type: "get",
+            url: "servlet/GetMaxPageNumOfAll",
+            data: {
+                "pagesize": pagesize,
+                "flag": "student"
+            },
+
+            success: function (result) {
+                //alert(result);
+                for (var i = 0; i < result; i++) {
+                    str += "<li><a href='javascript:getAllUserInfo(" + i + "," + pagesize + ")'>" + (i + 1) + "</a></li>";
+                }
+                //str+="第<input type='text' size='2' id='jumptoPage'/>页";
+                str += "<li><a href='#'>>></a></li>";
+                $("#pager").html(str);
+            },
+            error: function () {
+                alert("获取服务器失败");
+            }
+        });
+    }
+    function getAllUserInfo(page2, pagesize2) {
+        page = page2;
+        pagesize = pagesize2;
+        var student_id = $("#student_id").val();
+        var student_name = $("#student_name").val();
+        var department_id = $("#department_id").val();
+        var class_name = $("#class_name").val();
+        var gender = $("#gender").val();
+        var telephone = $("#telephone").val();
+        var email= $("#email").val();
+
+        $.ajax({
+            type : "post",
+            url : "servlet/GetStudentsInfoServlet",
+
+            /* data : {
+             "teacher_id" : $("#teacher_id").val(),
+             "department_id" : $("#department_id").val(),
+             "teacher_name" : $("#teacher_name").val(),
+             "gender" : $("#gender").val(),
+             "jobtitle_id" : $("#jobtitle_id").val(),
+             "teacher_inspector" : $("#teacher_inspector").val(),
+             }, */
+            data: {
+                "page": page,
+                "pagesize": pagesize
+            },
+            async : true,
+            success : function(result) {
+                foreachJSON(result);
+            },
+            error : function() {
+                alert("获取服务器失败");
+            }
+        });
+
+    }
+
+
+    function foreachDepartmentJSON(result) {
+        var str = "";
+        $.each(JSON.parse(result), function (index,key) {
+            str += "<option value="+ key.department_id +">" + key.department_name + "</option>";
+        });
+        $("#department_id").append(str);
+        $("#updtdepartment_id").append(str);
+    }
+
+    function getalldepartment(page2, pagesize2) {
+        page = page2;
+        pagesize = pagesize2;
+        $.ajax({
+            type: "post",
+            url: "servlet/GetDepartmentsInfoServlet",
+            data: {
+                "page": page,
+                "pagesize": pagesize
+            },
+            async: true,
+            success: function (result) {
+                foreachDepartmentJSON(result);
+            },
+            error: function () {
+                alert("获取服务器失败");
+            }
+        });
+    }
+</script>
+</body>
+</html>
