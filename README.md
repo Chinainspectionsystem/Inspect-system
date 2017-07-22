@@ -68,20 +68,28 @@ SVN版本控制工具
 ![](http://om8u46rmb.bkt.clouddn.com/%E8%AF%A2%E6%9F%A5%E7%B3%BB%E7%BB%9F%E7%A8%8B%E5%BA%8F%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
 
 ## 详细设计
-* 系统用户 
+* 系统用户
+
 ![](https://ws2.sinaimg.cn/large/006tNc79ly1fhsv7au5nfj30te0caaam.jpg)
 * 登录信息
+
 ![](https://ws3.sinaimg.cn/large/006tNc79ly1fhsv7tr4qij30u00cndg9.jpg)
 * 用户审核
+
 ![](http://om8u46rmb.bkt.clouddn.com/sysuser.png)
 * 教师管理
+
 ![](https://ws2.sinaimg.cn/large/006tNc79ly1fhsv8gwwb3j30wk0e3gmp.jpg)
 * 课程管理
+
 ![](https://ws4.sinaimg.cn/large/006tNc79ly1fhsv8u099mj31040af750.jpg)
 * 学生管理
+
 ![](https://ws3.sinaimg.cn/large/006tNc79ly1fhsv95gvt0j31050d0gmu.jpg)
 * 部门管理
+
 ![](https://ws2.sinaimg.cn/large/006tNc79ly1fhsv9hrh2hj310t0cn0td.jpg)
 * 职称管理
+
 ![](https://ws3.sinaimg.cn/large/006tNc79ly1fhsv9ugrmvj30py0elq3e.jpg)
 
