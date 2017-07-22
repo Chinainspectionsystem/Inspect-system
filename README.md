@@ -73,7 +73,7 @@ SVN版本控制工具
 * 登录信息
 ![](https://ws3.sinaimg.cn/large/006tNc79ly1fhsv7tr4qij30u00cndg9.jpg)
 * 用户审核
-![](https://ws3.sinaimg.cn/large/006tNc79ly1fhsv85b3o0j30uf0dqmxz.jpg)
+![](https://ws1.sinaimg.cn/large/006tNc79ly1fhsve69tn4j30uf0dqmxz.jpg)
 * 教师管理
 ![](https://ws2.sinaimg.cn/large/006tNc79ly1fhsv8gwwb3j30wk0e3gmp.jpg)
 * 课程管理
