@@ -47,7 +47,7 @@ SVN版本控制工具
 
 
 1. [登录](https://chinainspectionsystem.github.io/Inspect-system/Web/EduInspectSystem/WebContent/login.html)：实现条件限制的用户登录功能
-2. 注册：实现条件限制的用户注册功能。
+2. [注册](https://chinainspectionsystem.github.io/Inspect-system/Web/EduInspectSystem/WebContent/register.html)：实现条件限制的用户注册功能。
 3. 个人状态：个人信息，修改密码，上传头像，退出
 4. 系统管理：实现系统用户、登录信息、用户审核对数据的查询、编辑、删除、批量	删除、选择、全选、每页显示记录数量等操作。（仅管理员操作）
 5. 教务管理：教师管理，课程管理，学生管理，部门管理，职称管理，班级	管理
